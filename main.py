@@ -1,5 +1,5 @@
 from tkinter import Tk, Menu, messagebox, filedialog, ttk, Label, scrolledtext, INSERT, END, Button, Scrollbar, RIGHT, Y, Frame, Canvas, HORIZONTAL, VERTICAL, simpledialog, Text
-
+import re
 import analisis
 
 root = Tk()
@@ -62,14 +62,23 @@ def analizarTexto():
 
     editor.tag_config("Reservada",foreground ="red")
     editor.tag_config("Identificador",foreground ="green")
-    editor.tag_config("Cadea",foreground ="yelow")
+    editor.tag_config("CadeaChar",foreground ="yellow")
     editor.tag_config("BoolNum",foreground ="blue")
     editor.tag_config("Operadores",foreground ="orange")
+    editor.tag_config("Comentario", foreground = "gray")
     editor.tag_config("Otro",foreground ="black")
+    
 
     tokens = analisis.AnalizadorJS(texto)
 
+
+    print(re.match(r"[/\*(.|\n)*\*/]", texto))
+    print(re.match("function",texto).span())
+
     
+    editor.tag_bind("Reservada", "function")
+
+
 
             
 

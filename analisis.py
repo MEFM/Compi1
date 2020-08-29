@@ -1,5 +1,11 @@
 import re
 
+#########################################################################################################
+
+###################################-ANALIZADOR JAVA SCRIPT-###################################
+
+#########################################################################################################
+
 #Banderas de expresiones
 
 banderaID = False
@@ -8,6 +14,10 @@ banderaComntL = False
 banderaComntML = False
 banderaCadena = False
 banderaSigno = False
+banderaChr = False
+
+#Contador expresiones encontradas
+
 
 #Bandera Especial para numeros 
 validador = False
@@ -23,7 +33,8 @@ textoLimpio = ""
 Errores = []
 tokens = []
 
-palabrasReservadas = ["var","if","for","while","do","Continue","break","else","return","function","constructor","class","Math","pow","switch","case"]
+palabrasReservadas = ["var","if","for","while","do","continue","break","else","return","function","constructor","class","Math","pow","switch","case","new","alert","try","catch","in","this"]
+boolNum = ["true","false"]
 simbolos = {"ParAp":'(',"ParCr":')',"LlavAp":'{',"LlavCr":'}',"CorAp":'[',"CorCr":']',"Igual":'=',"PtYcm":';',"DosPt":':',"Pt":'.',"Cma":',',"MenorQ":'<',"MayorQ":'>',"Mas":'+',"Guion":'-',"Div":'/',"Asterisco":'*',"Negacion":'!',"Barra":'|',"Appersan":'&',"Mod":'%'}
 
 def AnalizadorJS(texto):
@@ -57,6 +68,9 @@ def AnalizadorJS(texto):
             columna = 0
             contador +=  1
             linea += 1
+        elif re.search("'",texto[contador]):
+            textoLimpio += texto[contador]
+            listaToks.append(Character(linea, columna, texto, texto[contador]))
         else:
             validadorSigno = False
 
@@ -79,10 +93,11 @@ def AnalizadorJS(texto):
                 contador += 1
 
     tokens = listaToks
+    Reservadas()
     print(tokens)
 
     print(textoLimpio)
-    Reservadas()
+
     
     return tokens
 
@@ -185,10 +200,10 @@ def Comentario(lineaa, columnaa, texto, palabra):
             return ComentarioL(lineaa, columnaa, texto, palabra + texto[contador])
         else:
             textoLimpio += texto[contador]
-            return [lineaa,columnaa,"",palabra]
+            return [lineaa,columnaa,"Comentario",palabra]
     else:
         textoLimpio += texto[contador]
-        return [lineaa,columnaa,"",palabra]
+        return [lineaa,columnaa,"Comentario",palabra]
     pass
 
 
@@ -229,7 +244,7 @@ def ComentarioML(lineaa, columnaa, texto, palabra):
             linea += 1
             columna = 0
             textoLimpio += texto[contador]
-            return ComentarioML(linea, columna, texto, palabra + texto[contador])
+            return ComentarioML(lineaa, columnaa, texto, palabra + texto[contador])
         elif re.search("[\*]", texto[contador]):
             textoLimpio += texto[contador]
             if (contador + 1) < len(texto):
@@ -240,14 +255,33 @@ def ComentarioML(lineaa, columnaa, texto, palabra):
                     return [lineaa, columnaa, "", palabra]
                 else:
                     textoLimpio += texto[contador]
-                    return ComentarioML(linea, columna, texto, palabra + texto[contador])
+                    return ComentarioML(lineaa, columnaa, texto, palabra + texto[contador])
         else:
             textoLimpio += texto[contador]
-            return ComentarioML(linea, columna, texto, palabra + texto[contador])
+            return ComentarioML(lineaa, columnaa, texto, palabra + texto[contador])
     else:
         banderaComntML = True
         textoLimpio += texto[contador]
         return [linea, columna, texto, palabra]
+
+def Character(lineaa, columnaa, texto, palabra):
+    global linea,columna, textoLimpio, contador, banderaChr
+    columna += 1
+    contador += 1
+
+    if contador < len(texto):
+        if re.search("[\n]", texto[contador]):
+            linea += 1
+            columna = 0
+            textoLimpio += texto[contador]
+            return Character(lineaa, columnaa, texto, palabra + texto[contador])
+        elif re.search("'",texto[contador]):
+            banderaChr = True
+            return [lineaa, columnaa, "Caracter",palabra]
+        else:
+            return Character(lineaa, columnaa, texto, palabra + texto[contador])
+
+
 
 
 def Reservadas():
@@ -256,8 +290,21 @@ def Reservadas():
     for token in tokens:
 
         if "ID" in token:
-            if (token[3] == "if") or (token[3] == "var") or token[3] == "else" or token[3] == "for" or token[3] == "while" or token[3] == "do" or token[3] == "continue" or token[3] == "return" or token[3] == "function" or token[3] == "constructor" or token[3] == "class": 
-                token[2] = "Reservada"
-               
+            if (token[3] == "if") or (token[3] == "var") or token[3] == "else" or token[3] == "for" or token[3] == "while" or token[3] == "do" or token[3] == "continue" or token[3] == "return" or token[3] == "function" or token[3] == "constructor" or token[3] == "class" or token[3] == "pow" or token[3] == "switch" or token[3] == "case" or token[3] == "new" or token[3] == "alert" or token[3] == "try" or token[3] == "catch" or token[3] == "in" or token[3] == "this": 
+                token[2] = "Reservada"                                                                                                                                                                                                                                                                                              #"Math","pow","switch","case","new","alert","try","catch","in","this"
+            elif (token[3] == "true") or (token[3] == "false"):
+                token[2] = "Booleano"
+        
+def expresionesUsadas():
 
+    expresionId = ""
+    expresionNumerica = ""
+    expresionComentL = ""
+    expresionComentML = ""
+    expresionChar = ""
+    expresionCadena = ""
+    expresionSimbolo = ""
+    
+    
+    pass
 
