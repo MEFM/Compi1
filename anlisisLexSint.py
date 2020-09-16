@@ -6,6 +6,7 @@ import os
 contador = 0
 columna = 0
 fila = 0
+validador = False
 
 simbolos = {"ParAp":"(", "ParC":")","Ast":"*","Sum":"+","Rest":"-","Div":"/","Punto":"."}
 tokens = []
@@ -15,13 +16,12 @@ erroresL = []
 
 erroresSintx = []
 cabeza = []
-
 timonTokens = 0
-
+validadorOperacion = False
 
 
 def analisisLex(texto):
-    global contador, columna, fila, simbolos, tokens
+    global contador, columna, fila, simbolos, tokens, validador, validadorOperacion
 
     listaTokens = []
 
@@ -39,6 +39,14 @@ def analisisLex(texto):
             columna = 0
             fila += 1
             contador += 1
+            tokens = listaTokens
+            listaTokens.append([fila+1,columna+1,"$$$","Final"])
+            sintaxis()
+            if validadorOperacion == False:
+                erroresSintx.append([fila+1,columna+1,validadorOperacion])
+            else:
+                erroresSintx.append([fila+1,columna+1,validadorOperacion])
+
             pass        
         else:
             validadorSigno = False
@@ -84,7 +92,6 @@ def Identificador(lineaa,columnaa, texto, palabra):
     else:
          return [lineaa, columna, "ID", palabra]
 
-validador = False
 def Numero(lineaa, columnaa, texto, palabra):
     global contador, columna, fila, validador
 
@@ -121,6 +128,9 @@ def sintaxis():
     cabeza = tokens[0]
     A()
 
+    if cabeza != "$$$":
+        print("Error")
+
 def posiblesErrores(tipo):
 
     if tipo == "Numero" or tipo == "ID":
@@ -144,21 +154,18 @@ def posiblesErrores(tipo):
 def encaje(tokenss):  
     global cabeza, timonTokens, tokens
 
-    print("Cabeza: ",cabeza[2], " Tokenss: ",tokenss)
+    #print("Cabeza: ",cabeza[2], " Tokenss: ",tokenss)
     
     if  (cabeza[2] != tokenss):                
-        print("Error sintactico. "+posiblesErrores(cabeza[2]))
+        print("Error sintactico. "+posiblesErrores(tokenss))
 
     if cabeza[2] == "$$$":
         print("Final de analisis sintactico")
         timonTokens = 0
+        tokens = []
     elif cabeza[2] != "$$$":
         timonTokens = timonTokens + 1
-        cabeza = tokens[timonTokens]
-
-
-        
-        
+        cabeza = tokens[timonTokens]       
 
 def A():
     global cabeza 
@@ -169,7 +176,7 @@ def A():
 def AP():
     global cabeza, timonTokens
 
-    envio = ["Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
+    #envio = ["Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
 
     if cabeza[2] == "Sum":
        encaje("Sum")
@@ -181,19 +188,15 @@ def AP():
         B()
         AP()
 
-
 def B():
     global cabeza
-
-    envio = ["Div","Ast","Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
-
+    #envio = ["Div","Ast","Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
     C()
     BP()
 
 def BP():
     global cabeza
-    envio = ["Div","Ast","Sum","Numero","ID","ParAp","ParC","$$$"]
-
+    #envio = ["Div","Ast","Sum","Numero","ID","ParAp","ParC","$$$"]
     if cabeza[2] == "Ast":
         encaje("Ast")
         C()
@@ -203,8 +206,6 @@ def BP():
         C()
         BP()
 
-
-
 def C():
     global cabeza
     print("C")
@@ -212,9 +213,13 @@ def C():
     if cabeza[2].strip() == "ParAp": 
         encaje("ParAp")
         A()
+        encaje("ParC")
     elif cabeza[2] == "Numero":
         encaje("Numero")
     elif cabeza[2] == "ID":
         encaje("ID")
     
 
+def reporte(texto):
+    global erroresSintx
+    
