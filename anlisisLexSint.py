@@ -144,9 +144,9 @@ def posiblesErrores(tipo):
 def encaje(tokenss):  
     global cabeza, timonTokens, tokens
 
-
+    print("Cabeza: ",cabeza[2], " Tokenss: ",tokenss)
     
-    if  (cabeza[2] in tokenss)==False and (cabeza[2] == tokenss)==False:                
+    if  (cabeza[2] != tokenss):                
         print("Error sintactico. "+posiblesErrores(cabeza[2]))
 
     if cabeza[2] == "$$$":
@@ -162,35 +162,22 @@ def encaje(tokenss):
 
 def A():
     global cabeza 
-    
-    envio = ["Sum","Numero","ID","ParAp","ParC","$$$"]
-
-    if cabeza[2].strip() == "ParAp": 
-        
-        encaje(envio)
-        B()
-        AP()
-    elif cabeza[2] == "Numero":
-        encaje(envio)
-        B()
-        AP()
-    elif cabeza[2] == "ID":
-        encaje(envio)
-        B()
-        AP()
+    B()
+    AP()
     pass
 #simbolos = {"ParAp":"(", "ParC":")","Ast":"*","Sum":"+","Rest":"-","Div":"/","Punto":"."}
 def AP():
-    global cabeza
+    global cabeza, timonTokens
 
+    envio = ["Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
 
     if cabeza[2] == "Sum":
-       encaje("")
+       encaje("Sum")
        B()
        AP()
 
     elif cabeza[2] == "Rest":
-        encaje("")
+        encaje("Rest")
         B()
         AP()
 
@@ -198,28 +185,21 @@ def AP():
 def B():
     global cabeza
 
-    envio = ["Sum","Numero","ID","ParAp","ParC","$$$"]
+    envio = ["Div","Ast","Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
 
-    if cabeza[2].strip() == "ParAp": 
-        
-        encaje(envio)
-        C()
-        BP()
-    elif cabeza[2] == "Numero":
-        encaje(envio)
-        C()
-        BP()
-    elif cabeza[2] == "ID":
-        C()
-        BP()
+    C()
+    BP()
 
 def BP():
     global cabeza
+    envio = ["Div","Ast","Sum","Numero","ID","ParAp","ParC","$$$"]
 
     if cabeza[2] == "Ast":
+        encaje("Ast")
         C()
         BP()
     elif cabeza[2] == "Div":
+        encaje("Div")
         C()
         BP()
 
@@ -227,8 +207,10 @@ def BP():
 
 def C():
     global cabeza
+    print("C")
 
     if cabeza[2].strip() == "ParAp": 
+        encaje("ParAp")
         A()
     elif cabeza[2] == "Numero":
         encaje("Numero")
