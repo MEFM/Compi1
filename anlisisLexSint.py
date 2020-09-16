@@ -21,33 +21,40 @@ validadorOperacion = False
 
 
 def analisisLex(texto):
-    global contador, columna, fila, simbolos, tokens, validador, validadorOperacion
+    global tominTokens,contador, columna, fila, simbolos, tokens, validador, validadorOperacion, erroresSintx
 
     listaTokens = []
-
+    envioTOk = []
     while contador < len(texto):
         if re.search("[A-Za-z]", texto[contador]):
             listaTokens.append(Identificador(fila, columna, texto, texto[contador]))
         elif re.search(r"[0-9]", texto[contador]):
             listaTokens.append(Numero(fila, columna, texto, texto[contador]))
         elif re.search("[ \t]",texto[contador]):
-
             columna += 1
             contador += 1
             pass
         elif re.search("[\n]",texto[contador]):
+
+
+            #listaTokens.append([fila, columna, "Salto","Salto"])
+            
+            tokens = listaTokens
+
+            tokens.append([fila+1,columna+1,"$$$","Final"])
+
+            sintaxis()
+
+            if validadorOperacion == False:
+                erroresSintx.append([fila, columna, validadorOperacion])
+            else:
+                erroresSintx.append([fila, columna, validadorOperacion])
+            
+            listaTokens = []
             columna = 0
             fila += 1
             contador += 1
-            tokens = listaTokens
-            listaTokens.append([fila+1,columna+1,"$$$","Final"])
-            sintaxis()
-            if validadorOperacion == False:
-                erroresSintx.append([fila+1,columna+1,validadorOperacion])
-            else:
-                erroresSintx.append([fila+1,columna+1,validadorOperacion])
-
-            pass        
+    
         else:
             validadorSigno = False
 
@@ -65,14 +72,17 @@ def analisisLex(texto):
                 columna +=1
                 erroresL.append([fila, columna, texto[contador], "Error lexico"])
     
-    listaTokens.append([fila+1,columna+1,"$$$","Final"])
+    #listaTokens.append([fila+1,columna+1,"$$$","Final"])
 
     tokens = listaTokens
-
+    
     for token in tokens:
         print(token)
 
-    sintaxis()
+    reporte(texto)
+    #sintaxis()
+    
+    
 
 
 
@@ -121,18 +131,23 @@ def Numero(lineaa, columnaa, texto, palabra):
 
 
 def sintaxis():
-    global tokens, cabeza
+    global tokens, cabeza,validadorOperacion,timonTokens
     print("Sintaxis")
+    timonTokens = 0
+    validadorOperacion = False
     #Inicio analizador sintactico
-
     cabeza = tokens[0]
     A()
 
-    if cabeza != "$$$":
-        print("Error")
-
+    if cabeza[2] != "$$$":
+        validadorOperacion = True
+    else:
+        validadorOperacion = False
 def posiblesErrores(tipo):
+    global validadorOperacion
 
+    validadorOperacion = True
+    
     if tipo == "Numero" or tipo == "ID":
         return "Falta Identificador o Numero"
     elif tipo == "ParAp":
@@ -149,10 +164,12 @@ def posiblesErrores(tipo):
         return "Falta slash para la divicion"
     else:
         return "No se encuentra "+tipo+" en el lenguaje"
-    pass
+    
+    
+    
 
 def encaje(tokenss):  
-    global cabeza, timonTokens, tokens
+    global cabeza, timonTokens, tokens, validadorOperacion
 
     #print("Cabeza: ",cabeza[2], " Tokenss: ",tokenss)
     
@@ -222,4 +239,62 @@ def C():
 
 def reporte(texto):
     global erroresSintx
-    
+
+    linea = texto.split("\n")
+    '''
+    for token in erroresSintx:
+        print("Expersion ",linea[token[0]],token[2])
+    '''
+    with open("/home/Operacions.html","w+") as file:
+
+        file.seek(0,0)
+
+        file.write("<html>")
+        file.write("<head>")
+        file.write("<title>Reporte de Archivo RMT</title>")
+        file.write("<style type=\"text/css\">table{table-layout: fixed; width: 100%; border-collapse: collapse;}</style>")
+        file.write("</head>")
+        file.write("<body>")
+        file.write("<h1>Tabla De Confirmacion RMT</h1>")
+        file.write("<table summary=\"Operaciones Econtradas\">")
+        file.write("<caption>Operaciones encontradas en el archivo de entrada</caption>")
+
+        file.write("<thead>")
+
+
+        file.write("<tr>")
+        file.write("<th scope=\"col\">No.</th>")
+        file.write("<th>Columna</th>")
+        file.write("<th>File</th>")
+        file.write("<th>Operacion</th>")
+        file.write("<th>Validacion</th>")
+        file.write("</tr>")
+
+
+        file.write("</thead>")
+
+
+        file.write("<tbody>")
+        file.write("</tbody>")
+        cont = 1
+        for error in erroresSintx:
+            file.write("<tr>")
+            file.write("<th scope=\"row\">"+str(cont)+"</th>")
+            file.write("<th scope=\"row\"> "+str(error[0])+"</th>")
+            file.write("<th scope=\"row\">"+str(error[1])+"</th>")
+            file.write("<th scope=\"row\">"+linea[error[0]]+"</th>")
+            if error[2] == True:                
+                file.write("<th scope=\"row\">Incorrecto</th>")
+            else:
+                file.write("<th scope=\"row\">Correcto</th>")                
+            file.write("</tr>")
+
+            cont += 1
+
+        file.write("</table>")
+        file.write("</body>")
+        file.write("</html>")
+
+        file.close()
+
+    webbrowser.open("/home/Operaciones.html")
