@@ -1,6 +1,10 @@
 from tkinter import Tk, Menu, messagebox, filedialog, ttk, Label, scrolledtext, INSERT, END, Button, Scrollbar, RIGHT, Y, Frame, Canvas, HORIZONTAL, VERTICAL, simpledialog, Text
 import re
 import analisis
+import analisisCss
+import analisisHtml
+import anlisisLexSint
+
 
 root = Tk()
 root.title("Proyecto 1. MEFM.")
@@ -10,16 +14,23 @@ root.configure(background = "Gray")
 
 archivo = ""
 
+nombre = ""
+#Expresion regular del Archivo (ER encontradas pues)
+
+
 def nuevo():
     global archivo
     editor.delete(1.0, END)#ELIMINAR EL CONTENIDO
     archivo = ""
 
 def abrir():
-    global archivo
+    global archivo, nombre
     archivo = filedialog.askopenfilename(title = "Abrir Archivo", initialdir = "C:/")
-
+    
     entrada = open(archivo)
+    #nombre = entrada.name()
+    nombre = archivo
+    print("Nombre de archivo ",archivo)
     content = entrada.read()
 
     editor.delete(1.0, END)
@@ -54,11 +65,29 @@ def guardarComo():
     archivo = guardar
 
 def reportes():
-
+    
     pass
 
 def analizarTexto():
+    global nombre
     texto = editor.get(1.0,END)
+
+    contenido = str.split(texto,"\n")
+    #Sirve para saber que analizador utilizar
+    if nombre.__contains__("js"):
+        tokens = analisis.AnalizadorJS(texto)
+    elif nombre.__contains__("html"):
+        aa =analisisHtml.AnalizadorHtml(texto)
+        pass
+    elif nombre.__contains__("css"):
+        tok = analisisCss.AnalizadorCss(texto)
+        textTerminal = analisisCss.Reporte()
+
+        terminalEditor.insert(INSERT, textTerminal)
+    elif nombre.__contains__("rmt"):
+        anlisisLexSint.analisisLex(texto)
+
+        pass
 
     editor.tag_config("Reservada",foreground ="red")
     editor.tag_config("Identificador",foreground ="green")
@@ -68,25 +97,13 @@ def analizarTexto():
     editor.tag_config("Comentario", foreground = "gray")
     editor.tag_config("Otro",foreground ="black")
     
-
-    tokens = analisis.AnalizadorJS(texto)
-
-
-    print(re.match(r"[/\*(.|\n)*\*/]", texto))
-    print(re.match("function",texto).span())
-
     
-    editor.tag_bind("Reservada", "function")
-
-
-
-            
-
 
 
     
 
-    
+
+
 
 
 
