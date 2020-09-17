@@ -92,7 +92,6 @@ def Identificador(lineaa,columnaa, texto, palabra):
 
     columna +=1
     contador += 1
-    print("Identificador")
     if contador < len(texto):
 
         if re.search("[A-Za-z0-9_]",texto[contador]):
@@ -141,8 +140,7 @@ def sintaxis():
 
     if cabeza[2] != "$$$":
         validadorOperacion = True
-    else:
-        validadorOperacion = False
+        
 def posiblesErrores(tipo):
     global validadorOperacion
 
@@ -185,13 +183,13 @@ def encaje(tokenss):
         cabeza = tokens[timonTokens]       
 
 def A():
-    global cabeza 
+    
     B()
     AP()
     pass
 #simbolos = {"ParAp":"(", "ParC":")","Ast":"*","Sum":"+","Rest":"-","Div":"/","Punto":"."}
 def AP():
-    global cabeza, timonTokens
+    global cabeza
 
     #envio = ["Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
 
@@ -206,7 +204,6 @@ def AP():
         AP()
 
 def B():
-    global cabeza
     #envio = ["Div","Ast","Rest","Sum","Numero","ID","ParAp","ParC","$$$"]
     C()
     BP()
@@ -224,8 +221,6 @@ def BP():
         BP()
 
 def C():
-    global cabeza
-    print("C")
 
     if cabeza[2].strip() == "ParAp": 
         encaje("ParAp")
@@ -297,4 +292,4 @@ def reporte(texto):
 
         file.close()
 
-    webbrowser.open("/home/Operaciones.html")
+    webbrowser.open("/home/Operacions.html")
