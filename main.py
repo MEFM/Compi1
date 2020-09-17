@@ -16,8 +16,6 @@ archivo = ""
 
 nombre = ""
 #Expresion regular del Archivo (ER encontradas pues)
-
-
 def nuevo():
     global archivo
     editor.delete(1.0, END)#ELIMINAR EL CONTENIDO
@@ -96,17 +94,6 @@ def analizarTexto():
     editor.tag_config("Operadores",foreground ="orange")
     editor.tag_config("Comentario", foreground = "gray")
     editor.tag_config("Otro",foreground ="black")
-    
-    
-
-
-    
-
-
-
-
-
-
 
 barraMenu = Menu(root)
 root.config(menu = barraMenu, width = 1000, height = 600)
@@ -125,20 +112,14 @@ barraMenu.add_cascade(label = "Archivo", menu = archivoMenu)
 barraMenu.add_cascade(label = "Analisis", menu = analisisMenu)
 barraMenu.add_command(label = "Acerca de...",  command = acercaDe)
 barraMenu.add_command(label = "Salir",  command = salir)
-
-
 frame = Frame(root, bg="Gray")
 canvas = Canvas(frame, bg="Gray")
 scrollbar = Scrollbar(frame, orient=VERTICAL, command=canvas.yview)
 scroll = Frame(canvas, bg="Gray")
-
 scroll.bind("<Configure>",lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 canvas.create_window((0, 0), window=scroll, anchor="nw")
-
 canvas.configure(yscrollcommand=scrollbar.set, width = 920, height = 750)
-
 editor = scrolledtext.ScrolledText(scroll, undo = True, width = 60, height = 15, font = ("Arial", 15), background = 'White',  foreground = "Black")
-
 editor.grid(column = 1, row = 1, pady = 25, padx = 125)
 
 
@@ -150,8 +131,6 @@ terminalEditor.place(x = 125,y = 450)
 frame.grid(sticky='news')
 canvas.grid(row=0,column=1)
 scrollbar.grid(row=0, column=2, sticky='ns')
-
-
 
 editor.focus()
 terminalEditor.focus()

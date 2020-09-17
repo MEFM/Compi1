@@ -31,8 +31,6 @@ def obtenerRuta(texto):
         print("si"+completa[6:])
         return completa[6:]
         
-        
-
 def AnalizadorCss(text):
     global contador, columna, fila, tokens, Errores, textoLimpioCss, reporte
 
@@ -116,7 +114,6 @@ def AnalizadorCss(text):
     print(textoLimpioCss)
     return tokens
     
-
 def Identificador(lineaa, columnaa, texto, palabra):
     global contador, columna, textoLimpioCss, reporte
 
@@ -253,7 +250,6 @@ def Clase(lineaa, columnaa, texto, palabra):
     else:
         return [lineaa, columnaa, 'ID', palabra]
 
-
 def Reservadas():
     global tokens, reservadas
 
@@ -267,7 +263,6 @@ def Reservadas():
 
     pass
 
-
 def Reporte():
     global reporte
 
@@ -278,7 +273,6 @@ def Reporte():
         string += str(estado) + "\n"
 
     return string
-
 
 def archivoLimpio(path):
     global textoLimpioCss
@@ -294,7 +288,6 @@ def archivoLimpio(path):
         file.seek(0,0)
         file.write(textoLimpioCss)
         file.close()
-
 
 def ReporteErrores(path):
     global Errores

@@ -81,12 +81,7 @@ def analisisLex(texto):
 
     reporte(texto)
     #sintaxis()
-    
-    
-
-
-
-    
+   
 def Identificador(lineaa,columnaa, texto, palabra):
     global fila, columna, contador
 
@@ -126,9 +121,6 @@ def Numero(lineaa, columnaa, texto, palabra):
         return [lineaa, columnaa, "Numero", palabra]
     pass
 
-
-
-
 def sintaxis():
     global tokens, cabeza,validadorOperacion,timonTokens
     print("Sintaxis")
@@ -163,9 +155,6 @@ def posiblesErrores(tipo):
     else:
         return "No se encuentra "+tipo+" en el lenguaje"
     
-    
-    
-
 def encaje(tokenss):  
     global cabeza, timonTokens, tokens, validadorOperacion
 
@@ -231,7 +220,6 @@ def C():
     elif cabeza[2] == "ID":
         encaje("ID")
     
-
 def reporte(texto):
     global erroresSintx
 
